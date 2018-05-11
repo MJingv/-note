@@ -1,0 +1,6 @@
+5.11
+1.q:flex:0 0 40% content大于宽度，无法折行
+a:word-break: break-all;告诉flexbox怎么去折行
+
+
+
