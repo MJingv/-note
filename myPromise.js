@@ -26,42 +26,72 @@ class MyPromise {
 
 		this._status = FULFILLED;
 		this._value = val;
-		console.log(this, 'resolve', val);
+		let cb;
+		while (cb = this._fulfilledQueues.shift()) {
+			cb();
+		}
+
+
+		// console.log(this, 'resolve', val);
 	}
 
 	_reject(err) {
 		if (this._status !== PENDING) return;
 		this._status = REJECTED;
 		this._value = err;
-		console.log(this, 'reject');
+		let cb;
+		while (cb = this._rejectedQueues.shift()) {
+			cb();
+		}
+		// console.log(this, 'reject');
 	}
 
 	then(onFulfilled, onRejected) {
-		// onFulfilled && onRejected 说明
-		// 1.必须是函数
-		// 2.onFulfilled 成功时被调用 第一个参数是resolve传入的值
-		//   onRejected  失败时被调用 第一个参数是reject传入的值
-		// 3.在promise状态改变前不能调用
-		// 4.调用次数<=1
+		//then可被多次调用，所有onFulfilled/onRejected需按照其注册顺序依次回调
+
+		/**
+		 * onFulfilled && onRejected 说明
+		 *1.必须是函数
+		 *2.onFulfilled 成功时被调用 第一个参数是resolve传入的值
+		 onRejected  失败时被调用 第一个参数是reject传入的值
+		 *3.在promise状态改变前不能调用
+		 *4.调用次数<=1
+		 */
 
 		const {_value, _status} = this;
 
-		switch (_status) {
-			case PENDING:
-				this._fulfilledQueues.push(onFulfilled);
-				this._rejectedQueues.push(onRejected);
-				break;
-			case FULFILLED:
-				onFulfilled(_value);
-				break;
-			case REJECTED:
-				onRejected(_value);
-		}
-		//then可被多次调用，所有onFulfilled/onRejected需按照其注册顺序依次回调
-
-
 		// then 方法必须返回一个新的 promise 对象
 		return new MyPromise((onFulfilledNext, onRejectedNext) => {
+			let fulfilled = value => {
+				try {
+					if (!isFunction(onFulfilled)) {
+						onFulfilledNext();
+					} else {
+						//TODO:看不懂
+						let res = onFulfilled(value);
+						res instanceof MyPromise ?
+							//pedding中
+							res.then(onFulfilledNext, onRejectedNext)
+							:
+							onFulfilledNext(res);
+					}
+				} catch (e) {
+					onRejectedNext(err);
+				}
+			};
+
+			switch (_status) {
+				// 当状态为pending时，将then方法回调函数加入执行队列等待执行
+				case PENDING:
+					this._fulfilledQueues.push(fulfilled);
+					this._rejectedQueues.push(rejected);
+					break;
+				case FULFILLED:
+					onFulfilled(_value);
+					break;
+				case REJECTED:
+					onRejected(_value);
+			}
 
 		});
 
@@ -72,10 +102,22 @@ class MyPromise {
 
 
 const p = new MyPromise((res) => {
-	console.log(res, 'p-suc=======');
+	console.log('p-suc=======');
 }, (err) => {
-	console.log(err, 'p-fail=======');
+	console.log('p-fail=======');
 });
+
+p.then((val) => {
+	console.log(val, 'then-----11111');
+}).then((val) => {
+	console.log(val, 'then-----2222');
+});
+
+
+
+
+
+
 
 
 
