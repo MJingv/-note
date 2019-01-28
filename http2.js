@@ -8,10 +8,10 @@ http.createServer(
 		// 内容类型: text/plain
 		response.writeHead(200, {
 			'Content-Type': 'text/html',
-			// 'Access-Control-Allow-Origin':'*'
-
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Headers': '*',
+			'Cache-Control': "max-age=5",
 		});
-
 
 		// 发送响应数据 "Hello World"
 		response.end('i am hello world form 8881');
