@@ -4,27 +4,88 @@
 <head>
     <title> xxx</title>
     <!--<script src="http://127.0.0.1:8881"></script>-->
-    <script>
 
-
-	    const xhr = new XMLHttpRequest();
-	    xhr.open('GET', 'http://127.0.0.1:8881');
-
-
-	    xhr.onreadystatechange = () => {
-		    if (xhr.readyState == 4 && xhr.status == 200) {
-
-			    let p = document.createElement('h1');
-			    p.innerText = xhr.responseText;
-
-			    document.body.appendChild(p);
-		    }
-	    };
-	    xhr.send();
-
-	    console.log(document.cookie, 'cookie-----');
-
-
-    </script>
 </head>
+<body>
+<ul id="ul">
+    <div>99999999</div>
+    <li>111</li>
+    <li>222</li>
+    <li>333</li>
+</ul>
+
+<button id="btn">click me to change color</button>
+<input id="input">
+<h1 id="h"></h1>
+</body>
+
+<script>
+	let title = document.getElementById('h');
+	title.innerText = 'test';
+
+	let obj = {val: 'test'};
+	Object.defineProperty(obj, 'val', {
+		enumerable: true,
+		configurable: true,
+		get: function () {
+			console.log('get');
+		},
+		set: function (newVal) {
+			// 当属性值发生变化时我们可以进行额外操作
+			console.log('set-------', newVal);
+			title.innerText = newVal;
+		},
+	});
+
+
+	let input = document.getElementById('input');
+	input.addEventListener('input', function (e) {
+		obj.val = e.target.value;
+		console.log(obj.val);
+		// title.innerText = obj.val;
+
+	});
+
+
+	//		const xhr = new XMLHttpRequest();
+	//		xhr.open('GET', 'http://127.0.0.1:8881');
+	//
+	//
+	//		xhr.onreadystatechange = () => {
+	//			if (xhr.readyState == 4 && xhr.status == 200) {
+	//
+	//				let p = document.createElement('h1');
+	//				p.innerText = xhr.responseText;
+	//
+	//				document.body.appendChild(p);
+	//			}
+	//		};
+	//		xhr.send();
+	//
+	//		console.log(document.cookie, 'cookie-----');
+
+	//
+	// let btn = document.getElementById('btn');
+	//
+	// btn.addEventListener('click', () => {
+	// 	console.log(111);
+	// 	btn.style.backgroundColor = 'red';
+	// }, false);
+	// btn.addEventListener('hover', () => {
+	// 	console.log(2222);
+	// });
+
+	// let ul = document.getElementById('ul');
+	// ul.addEventListener('click', (e) => {
+	//
+	//
+	// 	if (e.target && e.target.nodeName.toUpperCase() == "LI") {
+	//
+	// 	}
+	//
+	//
+	// }, false);
+
+
+</script>
 </html>
